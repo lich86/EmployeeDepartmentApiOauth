@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -36,7 +35,7 @@ public class EmployeeController {
 
     @GetMapping(value = "/summary/{id}")
     public EmployeeProjection getEmployeeProjection(@PathVariable(name = "id") Long id) {
-        return employeeService.getEmployeeProjection(id);
+        return employeeService.getEmployeeProjectionById(id);
     }
 
     @GetMapping
@@ -46,7 +45,7 @@ public class EmployeeController {
 
     @GetMapping(value = "/summary")
     public Page<EmployeeProjection> getEmployeeProjections(Pageable pageable) {
-        return employeeService.getAllEmployeeProjections(pageable);
+        return employeeService.findAllEmployeeProjections(pageable);
     }
 
     @PostMapping

@@ -4,11 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +21,7 @@ import java.util.Set;
 @Entity
 public class Department extends BaseEntity{
 
-    @Column(name="name")
+    @Column(name="name", unique=true)
     private String name;
 
     @OneToMany(mappedBy = "department", fetch = FetchType.EAGER)
