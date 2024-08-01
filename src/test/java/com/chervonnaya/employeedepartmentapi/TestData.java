@@ -20,7 +20,6 @@ public class TestData {
     public static final EmployeeDTO emptyEmployee = new EmployeeDTO();
     public static final String departmentURL = "/api/department";
     public static final String employeeURL = "/api/employee";
-    public static final String departmentProjectionURL = "/api/department/summary";
     public static final String employeeProjectionURL = "/api/employee/summary";
     public static final EmployeeProjection employeeProjection1 = new EmployeeProjection() {
         @Override

@@ -38,14 +38,6 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    static RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl
-            .withDefaultRolePrefix()
-            .role("ADMIN").implies("MODERATOR")
-            .role("MODERATOR").implies("USER")
-            .build();
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,9 +47,12 @@ public class SecurityConfiguration {
             .authenticationProvider(jwtAuthenticationProvider)
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/**").hasAuthority(Role.MODERATOR.getAuthority())
-                .requestMatchers(HttpMethod.PUT, "/api/**").hasAuthority(Role.MODERATOR.getAuthority())
+                .requestMatchers(HttpMethod.GET, "/api/**")
+                .hasAnyAuthority(Role.USER.getAuthority(),Role.MODERATOR.getAuthority(), Role.ADMIN.getAuthority())
+                .requestMatchers(HttpMethod.POST, "/api/**")
+                .hasAnyAuthority(Role.MODERATOR.getAuthority(), Role.ADMIN.getAuthority())
+                .requestMatchers(HttpMethod.PUT, "/api/**")
+                .hasAnyAuthority(Role.MODERATOR.getAuthority(), Role.ADMIN.getAuthority())
                 .requestMatchers(HttpMethod.DELETE, "/api/**").hasAuthority(Role.ADMIN.getAuthority())
                 .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

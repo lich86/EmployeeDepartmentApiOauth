@@ -5,16 +5,17 @@ import com.chervonnaya.employeedepartmentapi.dto.LoginDTO;
 import com.chervonnaya.employeedepartmentapi.security.JwtAuthenticationToken;
 import com.chervonnaya.employeedepartmentapi.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoginService {
 
     private final UserServiceImpl userService;
@@ -34,6 +35,7 @@ public class LoginService {
         JwtAuthenticationToken jwtAuthenticationToken =
             new JwtAuthenticationToken(userDetails, token, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(jwtAuthenticationToken);
+        log.info(String.format("User %s logged in successfully", request.getEmail()));
         return new AuthResponse(token);
     }
 }

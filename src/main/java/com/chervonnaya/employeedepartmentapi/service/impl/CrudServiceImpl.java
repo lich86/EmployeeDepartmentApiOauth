@@ -71,7 +71,7 @@ public class CrudServiceImpl<E extends BaseEntity, D extends BaseDTO, R extends 
                 this.genericType.getSimpleName().toLowerCase(), entity.getId()));
             return entity;
         } catch (Exception ex) {
-            log.error(String.format("Unable to update %s", this.genericType.getSimpleName().toLowerCase()), id);
+            log.error(String.format("Unable to update %s with id: %d", this.genericType.getSimpleName().toLowerCase(), id));
             throw new SaveEntityException(this.genericType.getSimpleName(), id, ex.getMessage());
         }
 

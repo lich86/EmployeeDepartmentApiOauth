@@ -70,8 +70,21 @@
 
     <changeSet id="7" author="lich">
         <insert tableName="users">
+            <column name="id" value="1"/>
+            <column name="email" value="admin@example.com"/>
+            <column name="password" value="$2a$10$OJIzk2lcAY93qelEU52pvOmRgkr1X2ehQaiKUBRfd0qYPa/FXcbFy"/>
+            <column name="role" value="ADMIN"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="2"/>
+            <column name="email" value="moderator@example.com"/>
+            <column name="password" value="$2a$10$OJIzk2lcAY93qelEU52pvOmRgkr1X2ehQaiKUBRfd0qYPa/FXcbFy"/>
+            <column name="role" value="MODERATOR"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="3"/>
             <column name="email" value="user@example.com"/>
-            <column name="password" value="$2a$12$ybJCAMYDaeoRX79xXm9mjOSMvOdJhsiat2TINTOyRRRXEjXv9b94W"/>
+            <column name="password" value="$2a$10$OJIzk2lcAY93qelEU52pvOmRgkr1X2ehQaiKUBRfd0qYPa/FXcbFy"/>
             <column name="role" value="USER"/>
         </insert>
     </changeSet>
