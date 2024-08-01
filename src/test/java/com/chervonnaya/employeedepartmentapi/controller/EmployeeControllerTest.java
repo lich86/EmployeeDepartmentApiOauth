@@ -6,12 +6,15 @@ import com.chervonnaya.employeedepartmentapi.service.impl.EmployeeServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -34,7 +37,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(EmployeeController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class EmployeeControllerTest {
 
     @Autowired
@@ -96,6 +100,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", roles = {"MODERATOR"})
     void postEmployee_Should_Succeed() throws Exception {
         when(serviceMock.save(any())).thenReturn(employee1);
 
@@ -106,6 +111,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", roles = {"MODERATOR"})
     void postEmployeeEmptyJson_Should_Fail() throws Exception {
         mockMvc.perform(post(employeeURL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -120,6 +126,7 @@ public class EmployeeControllerTest {
 
 
     @Test
+    @WithMockUser(username = "user", roles = {"MODERATOR"})
     void putEmployee_Should_Succeed() throws Exception {
         when(serviceMock.save(any())).thenReturn(employee1);
 
@@ -130,6 +137,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", roles = {"MODERATOR"})
     void putEmployee_Should_Fail() throws Exception {
         mockMvc.perform(put(employeeURL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -143,6 +151,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", roles = {"MODERATOR"})
     void deleteEmployee_Should_Succeed() throws Exception {
         when(serviceMock.delete(any())).thenReturn(1L);
 

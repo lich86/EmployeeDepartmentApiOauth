@@ -50,5 +50,30 @@
                              constraintName="uc_department_name"
                              tableName="department"/>
     </changeSet>
+    <changeSet id="6" author="lich">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT">
+            </column>
+            <column name="time_created" type="DATETIME"/>
+            <column name="time_updated" type="DATETIME"/>
+            <column name="email" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="lich">
+        <insert tableName="users">
+            <column name="email" value="user@example.com"/>
+            <column name="password" value="$2a$12$ybJCAMYDaeoRX79xXm9mjOSMvOdJhsiat2TINTOyRRRXEjXv9b94W"/>
+            <column name="role" value="USER"/>
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>
