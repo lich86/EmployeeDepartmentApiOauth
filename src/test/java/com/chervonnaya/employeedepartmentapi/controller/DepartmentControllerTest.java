@@ -84,7 +84,7 @@ public class DepartmentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"moderator@example.com", "admin@example.com"})
-    void postDepartment_Should_SucceedWithModerToken(String email) throws Exception {
+    void postDepartment_Should_SucceedWithValidToken(String email) throws Exception {
         String validToken = jwtUtil.generateToken(email);
         when(serviceMock.save(any())).thenReturn(department1);
 
@@ -121,7 +121,7 @@ public class DepartmentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"moderator@example.com", "admin@example.com"})
-    void putDepartment_Should_SucceedWithModerToken(String email) throws Exception {
+    void putDepartment_Should_SucceedWithValidToken(String email) throws Exception {
         String validToken = jwtUtil.generateToken(email);
         when(serviceMock.save(any())).thenReturn(department1);
 

@@ -151,7 +151,7 @@ public class EmployeeControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"moderator@example.com", "admin@example.com"})
-    void postEmployee_Should_SucceedWithModerToken(String email) throws Exception {
+    void postEmployee_Should_SucceedWithValidToken(String email) throws Exception {
         String validToken = jwtUtil.generateToken(email);
         when(serviceMock.save(any())).thenReturn(employee1);
 
