@@ -17,27 +17,9 @@ public class TestJwtUtil {
     private String secretKey;
     private final long EXPIRATION_TIME = 86400000;
 
-    public String generateAdminToken() {
+    public String generateToken(String email) {
         return Jwts.builder()
-            .subject("admin@example.com")
-            .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .signWith(getSecretKey())
-            .compact();
-    }
-
-    public String generateUserToken() {
-        return Jwts.builder()
-            .subject("user@example.com")
-            .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .signWith(getSecretKey())
-            .compact();
-    }
-
-    public String generateModeratorToken() {
-        return Jwts.builder()
-            .subject("moderator@example.com")
+            .subject(email)
             .issuedAt(new Date(System.currentTimeMillis()))
             .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .signWith(getSecretKey())

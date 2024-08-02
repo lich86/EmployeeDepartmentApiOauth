@@ -6,6 +6,8 @@ import com.chervonnaya.employeedepartmentapi.model.Department;
 import com.chervonnaya.employeedepartmentapi.service.impl.DepartmentServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,9 +51,10 @@ public class DepartmentControllerTest {
 
 
 
-    @Test
-    void getDepartment_Should_SucceedWithUserToken() throws Exception {
-        String validToken = jwtUtil.generateUserToken();
+    @ParameterizedTest
+    @ValueSource(strings = {"user@example.com", "moderator@example.com", "admin@example.com"})
+    void getDepartment_Should_SucceedWithValidToken(String email) throws Exception {
+        String validToken = jwtUtil.generateToken(email);
         when(serviceMock.getById(any())).thenReturn(department1);
 
         mockMvc.perform(get(departmentURL + "/1")
@@ -60,31 +63,11 @@ public class DepartmentControllerTest {
             .andExpect(jsonPath("$.name").value("Backend"));
     }
 
-    @Test
-    void getDepartment_Should_SucceedWithModerToken() throws Exception {
-        String validToken = jwtUtil.generateModeratorToken();
-        when(serviceMock.getById(any())).thenReturn(department1);
 
-        mockMvc.perform(get(departmentURL + "/1")
-                .header("Authorization", "Bearer " + validToken))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("Backend"));
-    }
-
-    @Test
-    void getDepartment_Should_SucceedWithAdminToken() throws Exception {
-        String validToken = jwtUtil.generateAdminToken();
-        when(serviceMock.getById(any())).thenReturn(department1);
-
-        mockMvc.perform(get(departmentURL + "/1")
-                .header("Authorization", "Bearer " + validToken))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("Backend"));
-    }
-
-    @Test
-    void getAllDepartments_Should_SucceedWithUserToken() throws Exception {
-        String validToken = jwtUtil.generateUserToken();
+    @ParameterizedTest
+    @ValueSource(strings = {"user@example.com", "moderator@example.com", "admin@example.com"})
+    void getAllDepartments_Should_SucceedWithValidToken(String email) throws Exception {
+        String validToken = jwtUtil.generateToken(email);
         Page<Department> departmentsPage = new PageImpl<>(List.of(department1, department2), PageRequest.of(0, 10), 2);
 
         when(serviceMock.findAll(PageRequest.of(0, 10))).thenReturn(departmentsPage);
@@ -98,41 +81,11 @@ public class DepartmentControllerTest {
             .andExpect(jsonPath("$.content.length()").value(2));
     }
 
-    @Test
-    void getAllDepartments_Should_SucceedWithModerToken() throws Exception {
-        String validToken = jwtUtil.generateModeratorToken();
-        Page<Department> departmentsPage = new PageImpl<>(List.of(department1, department2), PageRequest.of(0, 10), 2);
 
-        when(serviceMock.findAll(PageRequest.of(0, 10))).thenReturn(departmentsPage);
-
-        mockMvc.perform(get(departmentURL)
-                .param("page", "0")
-                .param("size", "10")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + validToken))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.length()").value(2));
-    }
-
-    @Test
-    void getAllDepartments_Should_SucceedWithAdminToken() throws Exception {
-        String validToken = jwtUtil.generateAdminToken();
-        Page<Department> departmentsPage = new PageImpl<>(List.of(department1, department2), PageRequest.of(0, 10), 2);
-
-        when(serviceMock.findAll(PageRequest.of(0, 10))).thenReturn(departmentsPage);
-
-        mockMvc.perform(get(departmentURL)
-                .param("page", "0")
-                .param("size", "10")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + validToken))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.length()").value(2));
-    }
-
-    @Test
-    void postDepartment_Should_SucceedWithModerToken() throws Exception {
-        String validToken = jwtUtil.generateModeratorToken();
+    @ParameterizedTest
+    @ValueSource(strings = {"moderator@example.com", "admin@example.com"})
+    void postDepartment_Should_SucceedWithModerToken(String email) throws Exception {
+        String validToken = jwtUtil.generateToken(email);
         when(serviceMock.save(any())).thenReturn(department1);
 
         mockMvc.perform(post(departmentURL)
@@ -142,21 +95,10 @@ public class DepartmentControllerTest {
             .andExpect(status().isOk());
     }
 
-    @Test
-    void postDepartment_Should_SucceedWithAdminToken() throws Exception {
-        String validToken = jwtUtil.generateAdminToken();
-        when(serviceMock.save(any())).thenReturn(department1);
-
-        mockMvc.perform(post(departmentURL)
-                .header("Authorization", "Bearer " + validToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(departmentDTO)))
-            .andExpect(status().isOk());
-    }
 
     @Test
     void postDepartment_Should_BeForbiddenWithUserToken() throws Exception {
-        String validToken = jwtUtil.generateUserToken();
+        String validToken = jwtUtil.generateToken("user@example.com");
         when(serviceMock.save(any())).thenReturn(department1);
 
         mockMvc.perform(post(departmentURL)
@@ -168,7 +110,7 @@ public class DepartmentControllerTest {
 
     @Test
     void postDepartmentEmptyJson_Should_ReturnBadRequest() throws Exception {
-        String validToken = jwtUtil.generateAdminToken();
+        String validToken = jwtUtil.generateToken("admin@example.com");
         mockMvc.perform(post(departmentURL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(emptyDepartment))
@@ -177,9 +119,10 @@ public class DepartmentControllerTest {
             .andExpect(jsonPath("$.message", containsString("Please provide a department name")));
     }
 
-    @Test
-    void putDepartment_Should_SucceedWithModerToken() throws Exception {
-        String validToken = jwtUtil.generateModeratorToken();
+    @ParameterizedTest
+    @ValueSource(strings = {"moderator@example.com", "admin@example.com"})
+    void putDepartment_Should_SucceedWithModerToken(String email) throws Exception {
+        String validToken = jwtUtil.generateToken(email);
         when(serviceMock.save(any())).thenReturn(department1);
 
         mockMvc.perform(put(departmentURL + "/1")
@@ -189,17 +132,6 @@ public class DepartmentControllerTest {
             .andExpect(status().isOk());
     }
 
-    @Test
-    void putDepartment_Should_SucceedWithAdminToken() throws Exception {
-        String validToken = jwtUtil.generateAdminToken();
-        when(serviceMock.save(any())).thenReturn(department1);
-
-        mockMvc.perform(put(departmentURL + "/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(departmentDTO))
-                .header("Authorization", "Bearer " + validToken))
-            .andExpect(status().isOk());
-    }
 
     @Test
     void putDepartment_Should_BeForbiddenWithoutToken() throws Exception {
@@ -213,7 +145,7 @@ public class DepartmentControllerTest {
 
     @Test
     void putDepartmentEmptyJson_Should_ReturnBadRequest() throws Exception {
-        String validToken = jwtUtil.generateAdminToken();
+        String validToken = jwtUtil.generateToken("admin@example.com");
         mockMvc.perform(put(departmentURL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(emptyDepartment))
@@ -224,7 +156,7 @@ public class DepartmentControllerTest {
 
     @Test
     void deleteDepartment_Should_SucceedWithAdminToken() throws Exception {
-        String validToken = jwtUtil.generateAdminToken();
+        String validToken = jwtUtil.generateToken("admin@example.com");
         when(serviceMock.delete(any())).thenReturn(1L);
 
         mockMvc.perform(delete(departmentURL + "/1")
@@ -240,9 +172,10 @@ public class DepartmentControllerTest {
             .andExpect(status().isForbidden());
     }
 
-    @Test
-    void deleteDepartment_Should_BeForbiddenWithUserToken() throws Exception {
-        String validToken = jwtUtil.generateUserToken();
+    @ParameterizedTest
+    @ValueSource(strings = {"user@example.com", "moderator@example.com"})
+    void deleteDepartment_Should_BeForbiddenWithNoAdminToken(String email) throws Exception {
+        String validToken = jwtUtil.generateToken(email);
         when(serviceMock.delete(any())).thenReturn(1L);
 
         mockMvc.perform(delete(departmentURL + "/1")
@@ -250,13 +183,4 @@ public class DepartmentControllerTest {
             .andExpect(status().isForbidden());
     }
 
-    @Test
-    void deleteDepartment_Should_BeForbiddenWithModerToken() throws Exception {
-        String validToken = jwtUtil.generateModeratorToken();
-        when(serviceMock.delete(any())).thenReturn(1L);
-
-        mockMvc.perform(delete(departmentURL + "/1")
-                .header("Authorization", "Bearer " + validToken))
-            .andExpect(status().isForbidden());
-    }
 }
