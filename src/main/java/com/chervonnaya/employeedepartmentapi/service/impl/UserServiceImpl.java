@@ -9,6 +9,7 @@ import com.chervonnaya.employeedepartmentapi.repository.UserRepository;
 import com.chervonnaya.employeedepartmentapi.service.mappers.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,7 +39,12 @@ public class UserServiceImpl extends CrudServiceImpl<User, UserDTO, UserReposito
             .map(user -> new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singleton(user.getRole())
+                Collections.singleton(new GrantedAuthority() {
+                    @Override
+                    public String getAuthority() {
+                        return user.getRole().getAuthority();
+                    }
+                })
             ))
             .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + email));
     }

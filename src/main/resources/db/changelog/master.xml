@@ -73,19 +73,19 @@
             <column name="id" value="1"/>
             <column name="email" value="admin@example.com"/>
             <column name="password" value="$2a$10$OJIzk2lcAY93qelEU52pvOmRgkr1X2ehQaiKUBRfd0qYPa/FXcbFy"/>
-            <column name="role" value="ADMIN"/>
+            <column name="role" value="ROLE_ADMIN"/>
         </insert>
         <insert tableName="users">
             <column name="id" value="2"/>
             <column name="email" value="moderator@example.com"/>
             <column name="password" value="$2a$10$OJIzk2lcAY93qelEU52pvOmRgkr1X2ehQaiKUBRfd0qYPa/FXcbFy"/>
-            <column name="role" value="MODERATOR"/>
+            <column name="role" value="ROLE_MODERATOR"/>
         </insert>
         <insert tableName="users">
             <column name="id" value="3"/>
             <column name="email" value="user@example.com"/>
             <column name="password" value="$2a$10$OJIzk2lcAY93qelEU52pvOmRgkr1X2ehQaiKUBRfd0qYPa/FXcbFy"/>
-            <column name="role" value="USER"/>
+            <column name="role" value="ROLE_USER"/>
         </insert>
     </changeSet>
 
