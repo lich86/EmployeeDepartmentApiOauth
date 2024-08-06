@@ -9,14 +9,13 @@ import com.chervonnaya.employeedepartmentapi.repository.UserRepository;
 import com.chervonnaya.employeedepartmentapi.service.mappers.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -32,20 +31,15 @@ public class UserServiceImpl extends CrudServiceImpl<User, UserDTO, UserReposito
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        if (loginAttemptService.isBlocked()) {
+        if (loginAttemptService.isBlocked(email)) {
             throw new RuntimeException("blocked");
         }
         return repository.findByEmailIgnoreCase(email)
             .map(user -> new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singleton(new GrantedAuthority() {
-                    @Override
-                    public String getAuthority() {
-                        return user.getRole().getAuthority();
-                    }
-                })
-            ))
+                user.getRoles())
+            )
             .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + email));
     }
 
@@ -53,14 +47,14 @@ public class UserServiceImpl extends CrudServiceImpl<User, UserDTO, UserReposito
     @Override
     public User update(Long id, UserDTO d) {
         User user = repository.findById(id).orElseThrow(() -> new EntityNotFoundException(this.genericType.getSimpleName(), id));
-        Role role = user.getRole();
+        Set<Role> roles = user.getRoles();
         try {
             d.setId(id);
-            Role newRole = (mapper.map(d)).getRole();
+            Set<Role> newRoles = (mapper.map(d)).getRoles();
             user = repository.save(mapper.map(d));
             String message = String.format("Updated %s, id: %d%s",
                 this.genericType.getSimpleName().toLowerCase(), user.getId(),
-                !newRole.equals(role) ? String.format(", user role changed to %s", newRole) : "");
+                !newRoles.equals(roles) ? String.format(", user roles changed to %s", newRoles) : "");
             log.info(message);
             return user;
         } catch (Exception ex) {
@@ -71,3 +65,4 @@ public class UserServiceImpl extends CrudServiceImpl<User, UserDTO, UserReposito
     }
 
 }
+

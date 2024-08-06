@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public abstract class UserMapper implements BaseMapper<User, UserDTO> {
 
     @Autowired
-    @Lazy
     public PasswordEncoder passwordEncoder;
 
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(dto.getPassword()))")

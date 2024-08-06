@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +22,6 @@ public class UserDTO extends BaseDTO{
     @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     private String password;
     @NotNull
-    private Role role;
+    private Set<Role> role;
 
 }
